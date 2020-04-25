@@ -18,7 +18,7 @@ use tera::{Context, Tera};
 use uuid::Uuid;
 
 type GenericError = Box<dyn std::error::Error + Send + Sync>;
-type ResponseFuture = Box<Future<Item = Response<Body>, Error = GenericError> + Send>;
+type ResponseFuture = Box<dyn Future<Item = Response<Body>, Error = GenericError> + Send>;
 
 static NOTFOUND: &[u8] = b"Oops! Not Found";
 
@@ -56,7 +56,7 @@ fn remove_todo(id: Uuid) {
     let todos = Arc::clone(&TODOS);
     let mut lock = todos.write().unwrap();
     let mut idx = lock.len();
-    for (i, todo) in lock.iter().enumerate() {
+    for (_i, todo) in lock.iter().enumerate() {
         if todo.id == id {
             idx = 1;
         }
@@ -81,7 +81,7 @@ fn four_oh_four() -> ResponseFuture {
     let body = Body::from(NOTFOUND);
     Box::new(future::ok(
         Response::builder()
-            .status(StatusCode::NOTFOUND)
+            .status(StatusCode::NOT_FOUND)
             .body(body)
             .unwrap(),
     ))
